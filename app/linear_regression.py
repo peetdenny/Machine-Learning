@@ -4,16 +4,17 @@ from app import tools
 
 class LinearRegressionMachine:
     trainingset = []
-    thetaA=-1
+    thetaA=0
     thetaB=32
+    alpha = 0.1
+    m = 0
 
     def costFunction(self, thetaA, thetaB):
     #J(thetaA,thetaB) = minimise -> 1/2m sum(i=1->m) h((thetaA,thetaB)(x)-y)^2
-        m = len(self.trainingset)
         sumOfCosts = 0
         for x,y in self.trainingset:
-            h = (thetaA * x) + thetaB;
-            cost = (y-h) **2
+            h = (thetaA * x) + thetaB * x
+            cost = (y-h) # remove square, since we're following the derivative of the cost function
             sumOfCosts += cost
         averageCost = sumOfCosts / m
         return averageCost
@@ -26,31 +27,25 @@ class LinearRegressionMachine:
     def make_cost_function(thetaA):
         return lambda x: costFunction(thetaA, x)
 
-    def gradientDescent(self):
-        # a super naive implementation. Let's assume that thetaB is known
+    def gradientDescent(self): # finds the derivate of the cost function with respect to theta_a
+        # t0 := t0 - alpha 1/m for i in training set: (h_theta(x_i) - y_i)
+        # t1 := t1 - alpha 1/m for i in training set: (h_theta(x_i) - y_i) * x_i
         print 'training model...'
-        thetaB = 32
-        h_thetaA = None
-        minimum = float('inf')
+        m = self.m
+        alpha = self.alpha
+        t0 = 10
+        t1 = 10
+        def h(x):
+            return t0 + (t1 * x)
 
-        aGen = self.drange(0,100,0.1)
-        for tA in aGen:
-            avCost = self.costFunction(tA,thetaB)
-            if avCost < minimum:
-#                print avCost, minimum
-                minimum = avCost
-                h_thetaA = tA
-                #print 'new minimum found', h_thetaA, ' at a cost of ', minimum
-
-        #print 'best fit we could find was for ',h_thetaA,' and ',thetaB, 'at a cost of ',minimum
-        global thetaA
-        global thetaB
-        thetaA = h_thetaA
-
+        temp0 =  alpha * reduce(lambda x,y: x+y, map(lambda x: (h(x[0]) -x[1]), self.trainingset)) / m
+        temp1 = alpha * (1/m) * reduce(lambda x,y: x+y, map(lambda x: ((h(x[0]) -x[1]) * x[0]), self.trainingset))
+        print 'trained with', temp0, temp1
     def convertCtoF(self, centigrade):
         return floor((centigrade * thetaA) + thetaB)
 
     def __init__(self):
         tools.read_data('resources/TrainingSet', self.trainingset)
+        self.m = len(self.trainingset)
         self.gradientDescent()
         print 'trained model with thetaA of', thetaA
