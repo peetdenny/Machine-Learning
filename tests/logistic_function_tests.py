@@ -25,17 +25,3 @@ class LogisticFunctionTests(unittest.TestCase):
         sig = lf.sigmoid(np.dot(X,theta))
         self.assertTrue(sig.max() <=1)
         self.assertTrue(sig.min() >=0)
-
-class PerceptronTests(unittest.TestCase):
-    def test_perceptron_firing(self):
-        self.assertEqual(lf.perceptron([1], [1]),1)
-        self.assertEqual(lf.perceptron([0],[0]),0)
-        X = np.matrix('1 2 3 4;5 6 7 8')
-        theta = np.matrix('2;2;2;2')
-        y = lf.perceptron(X,theta)
-        self.assertEqual(lf.perceptron(X,theta),1)
-
-        X = np.matrix('1 2 3 4;5 6 7 8')
-        theta = np.matrix('-2;-2;-2;-2')
-        y = lf.perceptron(X,theta)
-        self.assertEqual(lf.perceptron(X,theta),0)

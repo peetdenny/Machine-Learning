@@ -42,10 +42,10 @@ class LinearRegressionMachine:
         temp1 = alpha * (1/m) * reduce(lambda x,y: x+y, map(lambda x: ((h(x[0]) -x[1]) * x[0]), self.trainingset))
         print 'trained with', temp0, temp1
     def convertCtoF(self, centigrade):
-        return floor((centigrade * thetaA) + thetaB)
+        return floor((centigrade * self.thetaA) + self.thetaB)
 
     def __init__(self):
         tools.read_data('resources/TrainingSet', self.trainingset)
         self.m = len(self.trainingset)
         self.gradientDescent()
-        print 'trained model with thetaA of', thetaA
+        print 'trained model with thetaA of', self.thetaA
