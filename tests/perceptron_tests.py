@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 import app.perceptron as perceptron
+import app.logistic_functions as lf
 
 class PerceptionTests(unittest.TestCase):
     def test_logistic_correctness(self):
@@ -23,20 +24,32 @@ class PerceptionTests(unittest.TestCase):
         y = p.feed_forward(X)
         self.assertEqual(p.feed_forward(X),0)
 
+    def populateY(self, X):
+        y = np.ones((1000,1))
+        for i in range(1000):
+            t = X[i,1] + X[i,2]
+            y[i,0] =  (1 if t==2 else 0)
+        return y
+
+        for i in range(1000):
+            self.assertEqual((X[i,1]==1) & (X[i,2]==1), y[i,0])
+
+    def boolean_looks_good(self, p, inputs, expected):
+        inputM = np.matrix(inputs)
+        output = p.feed_forward(inputM)
+        self.assertEquals(expected, output)
+
     def test_can_be_trained(self):
-        rand = np.random.rand(1000,1)
-        y=[]
-        map(lambda x: (y.append((x[0] +2) *3)), rand)
-        y = np.matrix(y).T
+        rand = np.round(np.random.rand(1000,2))
         ones = np.ones((1000,1))
         X = np.append(ones, rand,1)
-        self.assertEqual((X[0,1] +2)*3,y[0,0]) # just doublecheck the test itself looks sane
-        p = perceptron.Perceptron(2)
-        p.train(X,y)
-
-
-    def test_can_predict(self):
+        y = np.ones((1000,1))
+        y = self.populateY(X)
         p = perceptron.Perceptron(3)
-        X = np.matrix('-50 -12 1')
-        result = p.feed_forward(X)
-        print result
+        cost = p.train(X,y)
+        self.assertTrue(cost < 0.0001)
+
+        self.boolean_looks_good(p, '1 1 1', 1)
+        self.boolean_looks_good(p, '1 0 1', 0)
+        self.boolean_looks_good(p, '1 1 0', 0)
+        self.boolean_looks_good(p, '1 0 0 ', 0)

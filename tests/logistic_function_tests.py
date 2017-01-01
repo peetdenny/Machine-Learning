@@ -20,8 +20,19 @@ class LogisticFunctionTests(unittest.TestCase):
         self.assertEqual(lf.sigmoid(0),0.5)
 
     def test_works_with_matrices(self):
-        X = np.matrix('1 2; 3 4; 5 6')
-        theta = np.matrix('2 2; 3 3')
+        X = np.matrix('1 2; 3 4; 5 6') # 3 x 2
+        theta = np.matrix('2;3') # 2 x 1
         sig = lf.sigmoid(np.dot(X,theta))
+        self.assertEqual(np.shape(sig),(3,1))
         self.assertTrue(sig.max() <=1)
         self.assertTrue(sig.min() >=0)
+
+    def test_cost_function(self):
+        rand = np.round(np.random.rand(1000,2))
+        ones = np.ones((1000,1))
+        X = np.append(ones, rand,1) # 1000 x 3
+
+        y = np.ones((1000,1)) # 1000 x 1
+        theta = np.matrix('2;3;3') # 3 x 1
+        cost = lf.cost_function(X,y,theta)
+        self.assertEqual(np.shape(cost),(1,1))
